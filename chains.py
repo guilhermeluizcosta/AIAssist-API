@@ -5,10 +5,9 @@ from decouple import config
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-
 os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
 
-def resumidor_chain(model):
+def get_resume_chain(model):
 
     prompt = ChatPromptTemplate.from_template(
         """
@@ -25,7 +24,7 @@ def resumidor_chain(model):
 
     return chain
 
-def explicar_codigo_chain(model):
+def get_explain_chain(model):
     prompt = ChatPromptTemplate.from_template(
         """
         Você é um assistente de programação. Receberá um código e deve explicar de forma clara e didática

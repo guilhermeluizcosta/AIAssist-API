@@ -3,7 +3,7 @@ from decouple import config
 from fastapi import FastAPI
 from langchain_groq import ChatGroq
 from langserve import add_routes
-from chains import resumidor_chain, explicar_codigo_chain
+from chains import get_explain_chain, get_resume_chain
 
 os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
 
@@ -17,31 +17,19 @@ app= FastAPI(
     description='API de Inteligência Artificial com FastAPI + LangChain + Groq',
 )
 
-# Inicializa as chains
-resumo_chain = resumidor_chain(model)
-explicar_chain = explicar_codigo_chain(model)
-
 
 # Endpoints
 add_routes(
     app,
-    model,
-    path='/groq',
-)
-
-
-add_routes(
-    app,
-    resumo_chain,
+    get_resume_chain(model),
     path='/resumir',
 )
 
 add_routes(
     app,
-    explicar_chain,
+    get_explain_chain(model),
     path='/explicar',
 )
-
 
 if __name__ == '__main__':
     import uvicorn
