@@ -20,11 +20,23 @@ app= FastAPI(
 )
 
 # Inicializa o middleware
-app.add_middleware(
-    middleware_class=AuthorizerMiddleware,
-    public_paths=['/docs', '/redoc', '/openapi.json'],
-    key_pattern='X_API_KEY',
-)
+ENABLE_AUTH = config('ENABLE_AUTH', cast=bool, default=True)
+
+if ENABLE_AUTH:
+    app.add_middleware(
+        middleware_class=AuthorizerMiddleware,
+        public_paths=[
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+            "/docs/swagger-ui-bundle.js",
+            "/docs/swagger-ui-init.js",
+            "/docs/swagger-ui-standalone-preset.js",
+            "/favicon.ico"
+        ],
+        key_pattern='X_API_KEY',
+    )
+
 
 # Endpoints
 add_routes(
