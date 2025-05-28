@@ -1,11 +1,6 @@
-import os
-
-from decouple import config
-
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
 
 def get_resume_chain(model):
 
@@ -39,3 +34,10 @@ def get_explain_chain(model):
 
     chain = prompt | model | StrOutputParser()
     return chain
+
+def get_translate_chain(model):
+    translate_prompt = ChatPromptTemplate.from_template(
+        'Você é um assistente de tradução. Traduza o texto a seguir para o idioma {lingua}: {texto}'
+    )
+    translate_chain = translate_prompt | model | StrOutputParser()
+    return translate_chain
