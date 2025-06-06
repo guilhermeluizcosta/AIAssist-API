@@ -1,64 +1,31 @@
-import os
-from decouple import config
 from fastapi import FastAPI
-from langchain_groq import ChatGroq
-from langserve import add_routes
-from fastapi_key_auth import AuthorizerMiddleware
-from chains import get_explain_chain, get_resume_chain, get_translate_chain
+from config import model
+from routers.traduzir import router as traduzir_router
+from routers.explicar import router as explicar_router
+from routers.resumir import router as resumir_router
+from routers.auth import router as auth_router
+from middlewares.apikey_middleware import APIKeyMiddleware
+from db import init_db
 
-os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
-os.environ['X_API_KEY'] = config('X_API_KEY')
-
-# Inicializa o modelo
-model = ChatGroq(model="llama-3.3-70b-versatile")
-
-# Inicializa a aplicação FastAPI
-app= FastAPI(
-    title= "LlamaServe AI",
-    version='0.1',
+app = FastAPI(
+    title="LlamaServe AI",
+    version='0.2',
     description='API de Inteligência Artificial com FastAPI + LangChain + Groq',
 )
 
-# Inicializa o middleware
-ENABLE_AUTH = config('ENABLE_AUTH', cast=bool, default=True)
+# Inicializa o banco
+init_db()
 
-if ENABLE_AUTH:
-    app.add_middleware(
-        middleware_class=AuthorizerMiddleware,
-        public_paths=[
-            "/docs",
-            "/redoc",
-            "/openapi.json",
-            "/docs/swagger-ui-bundle.js",
-            "/docs/swagger-ui-init.js",
-            "/docs/swagger-ui-standalone-preset.js",
-            "/favicon.ico"
-        ],
-        key_pattern='X_API_KEY',
-    )
+# Middlewares
+app.add_middleware(APIKeyMiddleware)
 
+# Rotas
+app.include_router(auth_router)
+app.include_router(traduzir_router)
+app.include_router(explicar_router)
+app.include_router(resumir_router)
 
-# Endpoints
-add_routes(
-    app,
-    get_resume_chain(model),
-    path='/resumir',
-)
-
-add_routes(
-    app,
-    get_explain_chain(model),
-    path='/explicar',
-)
-
-add_routes(
-    app,
-    get_translate_chain(model),
-    path='/traduzir'
-)
 
 if __name__ == '__main__':
     import uvicorn
-
     uvicorn.run(app, host='localhost', port=8000)
-
