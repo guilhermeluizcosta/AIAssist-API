@@ -4,7 +4,6 @@ from routers.traduzir import router as traduzir_router
 from routers.explicar import router as explicar_router
 from routers.resumir import router as resumir_router
 from routers.auth import router as auth_router
-from middlewares.apikey_middleware import APIKeyMiddleware
 from db import init_db
 
 app = FastAPI(
@@ -15,9 +14,6 @@ app = FastAPI(
 
 # Inicializa o banco
 init_db()
-
-# Middlewares
-app.add_middleware(APIKeyMiddleware)
 
 # Rotas
 app.include_router(auth_router)
