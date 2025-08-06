@@ -19,12 +19,23 @@ API REST criada com **FastAPI + LangChain + Groq (Llama 3.3)**, oferecendo funci
 Embora a documentação `/docs` seja pública, **todas as rotas da API são protegidas com autenticação via API Key**.
 
 ### Se quiser realizar uma requisição:
-- Entre em contato comigo: guilhermelc10@gmail.com para ter o acesso a APIKey
-- Adicione a x-api-key ao header
-
-
-###  Motivo da chave não ser pública:
-Por questões de **segurança, controle de uso e prevenção contra abusos**, a chave não está pública. Somente usuários autorizados receberão acesso.
+- Cadastre-se utilizando o endpoint:
+`POST /registrar`
+```json
+{
+  "email": "string",
+  "nome": "string",
+  "senha": "string"
+}
+```
+- Ou faça o login utilizando o endpoint:
+`POST /login`
+```json
+{
+  "email": "string",
+  "senha": "string"
+}
+``` 
 
 ---
 ## **Tecnologias usadas**
